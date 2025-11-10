@@ -772,15 +772,12 @@ onMounted(async () => {
       indentSettings,
     ],
     doc: `int main() {
-  pen.hide();
-  for(;;){
-    pen.setRotationMode(1);
-    pen.rt(30);
-    pen.drawRect(100,30 );
-    pen.wait(0.1);
-    pen.clear();
-    }
-    return 0;
+  pen.color("4");pen.hide();
+  for (int i = 0; i <= 400; i=i+40) {
+    pen.r(400-i,i);
+    pen.wait(0.01);
+  }
+  return 0;
 }`,
   });
 
