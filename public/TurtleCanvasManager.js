@@ -27,7 +27,7 @@ class TurtleCanvasManager {
         this.showGrid = false; // 默认不显示网格
         this.gridUnit = 50; // 网格单位大小
         this.turtleVisible = true; // 默认显示乌龟
-        this.animationSpeed = 100.0; // 默认动画速度为1.0倍
+        this.animationSpeed = 1.0; // 默认动画速度为1.0倍
 
         // 图片缓存
         this.imageCache = new Map();
