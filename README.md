@@ -4,7 +4,7 @@ ToC Playground (Turtle on C) 是一个专为C语言教学设计的在线解释�
 
 ## 功能特点
 
-### 1. 海龟绘图功能
+### 1. 绘图功能
 - 提供类似Python Turtle的绘图功能
 - 支持多种绘图命令：前进、后退、转向、绘制图形等
 - 可视化编程，帮助学生理解程序执行流程
@@ -19,7 +19,7 @@ ToC Playground (Turtle on C) 是一个专为C语言教学设计的在线解释�
 - 实时运行结果展示
 - 可视化的海龟绘图区域
 
-## 海龟绘图命令
+## 绘图命令
 
 ### 基本移动命令
 - `pen.forward(distance)` 或 `pen.fd(distance)` - 向前移动指定距离
@@ -86,19 +86,9 @@ int main() {
 # 克隆项目
 git clone <repository-url>
 cd toc
-
-# 构建WebAssembly模块
-cd runtime
-./build-wasm.sh
-
-# 启动开发服务器
-cd ../ide2
 npm install
 npm run dev
 ```
-
-### 在线使用
-访问 [ToC Playground](https://your-deployment-url.com) 即可直接使用，无需安装任何软件。
 
 ## 教学应用场景
 
@@ -117,17 +107,6 @@ npm run dev
 - 可视化函数图像
 - 展示数学规律和模式
 
-## 技术架构
-
-### 前端
-- Vue.js - 现代化的前端框架
-- CodeMirror - 代码编辑器组件
-- HTML5 Canvas - 海龟绘图渲染
-
-### 后端
-- Go语言 - 核心解释器实现
-- WebAssembly - 在浏览器中运行Go代码
-- AST解析器 - C语言语法分析
 
 ## 贡献
 
