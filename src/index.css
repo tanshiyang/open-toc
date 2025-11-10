@@ -1,0 +1,288 @@
+@import "tailwindcss";
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow: hidden;
+  height: 100vh;
+}
+
+.split-container {
+  display: flex;
+  height: calc(100vh - 64px - 144px);
+  min-height: 200px;
+}
+
+.split-handle {
+  width: 4px;
+  background-color: #ccc;
+  cursor: col-resize;
+  transition: background-color 0.2s;
+  z-index: 10;
+}
+
+.split-handle:hover {
+  background-color: #666;
+  width: 4px;
+}
+
+.h-split-handle {
+  height: 4px;
+  background-color: #ccc;
+  cursor: row-resize;
+  transition: background-color 0.2s;
+  z-index: 10;
+}
+
+.h-split-handle:hover {
+  background-color: #666;
+  /* width: 4px; */
+}
+
+.vertical-text {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  white-space: nowrap;
+}
+
+.output-window {
+  font-family: 'Fira Code', monospace;
+  font-size: 14px;
+}
+
+.canvas-container {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 100%; /* 600/800 = 0.75 = 75% */
+  margin-bottom: 20px;
+}
+
+#gridCanvas,
+#lineCanvas,
+#turtleCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#gridCanvas {
+  z-index: 0;
+  background-color: #fff;
+}
+
+#lineCanvas {
+  z-index: 1;
+  background-color: transparent;
+}
+
+#turtleCanvas {
+  z-index: 2;
+  background-color: transparent;
+  pointer-events: none;
+}
+
+/* 调试时高亮当前行的样式 */
+.cm-debug-line {
+  background-color: rgba(255, 255, 0, 0.2); /* 黄色背景 */
+  border-right: 3px solid #ffcc00; /* 左侧黄色边框 */
+}
+
+.cm-editor .cm-activeLine.cm-debug-line {
+  background-color: rgba(255, 255, 0, 0.3);
+}
+
+/* ide2/src/index.css 或相关 CSS 文件 */
+
+.input-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+}
+
+.input-dialog {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    min-width: 300px;
+    width: 300px;
+    margin: auto;
+    margin-top: 10px;
+}
+
+.input-dialog label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.input-dialog input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.input-buttons {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.input-buttons button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.input-buttons button:first-child {
+    background-color: #007bff;
+    color: white;
+}
+
+/* .input-buttons button:last-child {
+    background-color: #6c757d;
+    color: white;
+} */
+
+/* 确保自定义错误图标样式具有高优先级 */
+.cm-lint-marker-error {
+  background-image: url('/error.png') !important;
+  background-size: 14px 14px !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  width: 14px !important;
+  height: 14px !important;
+  display: inline-block !important;
+  content: '' !important;
+}
+
+/* 确保在gutter元素中的错误图标也被正确样式化 */
+.cm-gutterElement .cm-lint-marker-error {
+  background-image: url('/error.png') !important;
+  background-size: 14px 14px !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  width: 14px !important;
+  height: 14px !important;
+  display: inline-block !important;
+}
+
+.cm-gutterElement.hover-breakpoint::before {
+  content: "●";
+  color: rgba(255, 0, 0, 0.5); /* 半透明红色 */
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.cm-gutterElement.hover-breakpoint {
+  position: relative;
+}
+
+/* 添加提示文本样式 */
+.breakpoint-tooltip {
+  position: absolute;
+  background: #333;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  z-index: 1000;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* 自动补全提示框样式 */
+.cm-tooltip.cm-tooltip-autocomplete {
+  background: #2d3748;
+  border: 1px solid #4a5568;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  color: #e2e8f0;
+  font-family: 'Fira Code', monospace;
+  font-size: 14px;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.cm-tooltip.cm-tooltip-autocomplete ul {
+  padding: 4px 0;
+  margin: 0;
+}
+
+.cm-tooltip.cm-tooltip-autocomplete li {
+  padding: 4px 8px;
+  margin: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.cm-tooltip.cm-tooltip-autocomplete li[aria-selected] {
+  background: #4a5568;
+}
+
+.cm-tooltip.cm-tooltip-autocomplete .cm-completionLabel {
+  color: #63b3ed;
+  flex-grow: 1;
+}
+
+.cm-tooltip.cm-tooltip-autocomplete .cm-completionDetail {
+  color: #a0aec0;
+  font-size: 0.9em;
+  margin-left: 1em;
+}
+
+.cm-tooltip.cm-tooltip-autocomplete .cm-completionInfo {
+  background: #4a5568;
+  border-left: 1px solid #718096;
+  padding: 8px;
+  max-width: 500px;
+  font-size: 0.9em;
+}
+
+.cm-completionMatchedText {
+  text-decoration: underline;
+}
+
+.cm-completionIcon-function::before {
+  background: #4a5568;
+  color: #63b3ed;
+  width: 1.2em;
+  height: 1.2em;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 6px;
+  font-size: 0.8em;
+}
+
+.editor-container .cm-editor {
+  font-size: 18px; /* 默认字体大小 */
+}
+
+.editor-container .cm-scroller {
+  font-size: inherit;
+}
+
+.editor-container .cm-gutters {
+  font-size: inherit;
+}
