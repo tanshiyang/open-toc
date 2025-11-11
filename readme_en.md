@@ -5,6 +5,7 @@
 ToC Playground (Turtle on C) is an online interpreter and visual programming environment designed specifically for C language teaching. It allows students to learn C programming through a method similar to Python's Turtle library, intuitively understanding programming concepts through graphical visualization.
 
 ![Rectangle Transformation](./sample/长方形的变化.png)
+![Rectangle Transformation](./sample/万花筒.png)
 
 ## Features
 
