@@ -17,14 +17,15 @@
 
       <!-- 中间部分 -->
       <div class="flex items-center flex-1 max-w-md mx-4">
-        <input
+        <!-- <input
           type="text"
           v-model="programName"
           class="bg-gray-700 rounded px-2 py-1 text-sm w-full focus:outline-none focus:ring-1 focus:ring-blue-500"
         />
         <button class="ml-2 text-gray-300 hover:text-white">
           <i class="fa fa-pencil"></i>
-        </button>
+        </button> -->
+        <SampleMenu :samples="sampleFiles" @select="loadSample" class="ml-10" />
         <button
           @click="handleOpen"
           class="ml-10 text-gray-300 hover:text-white text-base whitespace-nowrap"
@@ -68,7 +69,7 @@
                 class="bg-gray-700 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs"
                 title="减小字体"
               >
-                <i class="fa fa-search-minus"></i>
+                <i class="fa fa-search-minus">-</i>
               </button>
               <span class="text-xs mx-1">{{ fontSize }}px</span>
               <button
@@ -394,6 +395,7 @@
 
 <script setup>
 import "./index.css";
+import SampleMenu from "./components/SampleMenu.vue";
 import { vitesseLight } from "codemirror-theme-vitesse";
 import { ref, onMounted, nextTick, watch, onBeforeUnmount } from "vue";
 import { EditorView, highlightActiveLine, keymap } from "@codemirror/view";
@@ -417,6 +419,7 @@ import { lineNumbers, gutter, GutterMarker } from "@codemirror/view";
 import { formatCode } from "./components/CodeFormatter.js";
 
 // 状态变量
+const sampleFiles = ref([]);
 const programName = ref("未命名程序");
 const codePanelWidth = ref(50);
 const resultPanelWidth = ref(50);
@@ -459,7 +462,7 @@ const tabKeyMap = keymap.of([
     run: indentMore, // Tab 键增加缩进
     shift: indentLess, // Shift+Tab 减少缩进
   },
-   {
+  {
     key: "Alt-F", // VS Code标准格式化快捷键
     run: () => {
       handleFormatCode();
@@ -468,7 +471,7 @@ const tabKeyMap = keymap.of([
     shift: () => {
       handleFormatCode();
       return true;
-    }
+    },
   },
 ]);
 
@@ -752,7 +755,8 @@ const breakpointGutter = gutter({
 onMounted(async () => {
   // 加载 WASM 模块
   await loadWasmModule();
-
+  await loadWasmModule();
+  await loadSampleFiles();
   // 创建CodeMirror编辑器
   const startState = EditorState.create({
     extensions: [
@@ -772,7 +776,7 @@ onMounted(async () => {
       indentSettings,
     ],
     doc: `int main() {
-  pen.color("4");pen.hide();
+  pen.color(5);pen.hide();
   for (int i = 0; i <= 400; i=i+40) {
     pen.r(400-i,i);
     pen.wait(0.01);
@@ -1502,18 +1506,18 @@ const handleFormatCode = async () => {
   try {
     isFormatting.value = true;
     const code = editor.value.state.doc.toString();
-    
+
     // 调用独立的格式化模块
     const result = await formatCode(code, isWasmLoaded.value);
-    
+
     if (result.success) {
       // 替换编辑器中的代码为格式化后的代码
       editor.value.dispatch({
         changes: {
           from: 0,
           to: editor.value.state.doc.length,
-          insert: result.formattedCode
-        }
+          insert: result.formattedCode,
+        },
       });
       outputLines.value.push(result.message);
     } else {
@@ -1523,6 +1527,39 @@ const handleFormatCode = async () => {
     outputLines.value.push(`[错误] 代码格式化失败: ${error.message}`);
   } finally {
     isFormatting.value = false;
+  }
+};
+
+// 加载示例文件列表
+const loadSampleFiles = async () => {
+  try {
+    // 写死示例文件列表
+    const files = ["长方形的变化.cpp", "万花筒.cpp"]; 
+    sampleFiles.value = files.map((file) => ({
+      name: file.replace(".cpp", ""),
+      path: `/samples/${file}`,
+    }));
+  } catch (error) {
+    console.error("Failed to load sample files:", error);
+    outputLines.value.push("[错误] 加载示例文件失败");
+  }
+};
+// 加载示例文件内容
+const loadSample = async (sample) => {
+  try {
+    const response = await fetch(sample.path);
+    const content = await response.text();
+    editor.value.dispatch({
+      changes: {
+        from: 0,
+        to: editor.value.state.doc.length,
+        insert: content,
+      },
+    });
+    programName.value = sample.name + ".cpp";
+  } catch (error) {
+    console.error("Failed to load sample:", error);
+    outputLines.value.push(`[错误] 加载示例文件失败: ${sample.name}`);
   }
 };
 </script>

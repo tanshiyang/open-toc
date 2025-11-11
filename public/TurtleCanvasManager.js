@@ -24,8 +24,8 @@ class TurtleCanvasManager {
         this.penColor = '#3498db';
         this.penWidth = 2;
         this.turtleSize = 32;
-        this.showGrid = false; // 默认不显示网格
-        this.gridUnit = 50; // 网格单位大小
+        this.showGrid = true; // 默认不显示网格
+        this.gridUnit = 100; // 网格单位大小
         this.turtleVisible = true; // 默认显示乌龟
         this.animationSpeed = 1.0; // 默认动画速度为1.0倍
 
@@ -35,6 +35,9 @@ class TurtleCanvasManager {
         // 创建乌龟图标
         this.createTurtleImage();
         this.initCanvases();
+        
+        this.toggleGrid();
+        this.drawGrid();
     }
 
     /**
@@ -42,7 +45,7 @@ class TurtleCanvasManager {
  * @param {number} speed - 动画速度倍数 (1为默认速度，>1为加速，<1为减速)
  */
     setSpeed(speed) {
-        this.animationSpeed = Math.max(0.1, Math.min(10, speed)); // 限制速度在0.1到10倍之间
+        this.animationSpeed = Math.max(0.1, Math.min(20, speed)); // 限制速度在0.1到20倍之间
     }
 
 
@@ -93,7 +96,8 @@ class TurtleCanvasManager {
             this.gridCanvas.style.position = 'absolute';
             this.gridCanvas.style.left = '0';
             this.gridCanvas.style.top = '0';
-            this.gridCanvas.style.zIndex = '0'; // 网格在最底层
+            this.gridCanvas.style.zIndex = '10'; 
+            this.gridCanvas.style.opacity = '0.3';
         }
 
         // 设置乌龟画布和线条画布的样式
@@ -119,11 +123,9 @@ class TurtleCanvasManager {
     * 切换网格显示/隐藏
     */
     toggleGrid() {
+        if (this.gridCanvas) {
         this.showGrid = !this.showGrid;
-        if (this.showGrid) {
-            this.drawGrid();
-        } else {
-            this.clearGrid();
+            this.gridCanvas.style.display = this.showGrid ? 'block' : 'none';
         }
     }
 
@@ -139,9 +141,9 @@ class TurtleCanvasManager {
         this.gridCtx.clearRect(0, 0, this.gridCanvas.width, this.gridCanvas.height);
 
         // 设置网格线样式
-        this.gridCtx.strokeStyle = '#e0e0e0';
+        this.gridCtx.strokeStyle = '#999';
         this.gridCtx.lineWidth = 1;
-        this.gridCtx.fillStyle = '#888888';
+        this.gridCtx.fillStyle = '#000';
         this.gridCtx.font = '12px Arial';
         this.gridCtx.textAlign = 'center';
         this.gridCtx.textBaseline = 'middle';
@@ -205,7 +207,7 @@ class TurtleCanvasManager {
         }
 
         // 绘制坐标轴
-        this.gridCtx.strokeStyle = '#999';
+        this.gridCtx.strokeStyle = '#000';
         this.gridCtx.lineWidth = 2;
 
         // X轴 (水平线) - 位于画布垂直中心
@@ -221,7 +223,7 @@ class TurtleCanvasManager {
         this.gridCtx.stroke();
 
         // 绘制坐标标签
-        this.gridCtx.fillStyle = '#999';
+        this.gridCtx.fillStyle = '#000';
         this.gridCtx.font = '12px Arial';
         this.gridCtx.textAlign = 'left';
         this.gridCtx.textBaseline = 'top';
@@ -566,17 +568,21 @@ class TurtleCanvasManager {
         this.lineCtx.clearRect(0, 0, this.lineCanvas.width, this.lineCanvas.height);
         this.turtleCtx.clearRect(0, 0, this.turtleCanvas.width, this.turtleCanvas.height);
 
-        // 清除网格
-        if (this.gridCtx) {
-            this.gridCtx.clearRect(0, 0, this.gridCanvas.width, this.gridCanvas.height);
-            if (this.showGrid) {
-                this.drawGrid();
-            }
-        }
-
-        // 重置乌龟位置到中心
         this.x = this.lineCanvas.width / 2;
         this.y = this.lineCanvas.height / 2;
+        this.angle = 90; // 默认向上（数学坐标系）
+        this.isPenDown = true;
+        this.rotationMode = 0; // 0: 正常, 1: 跟随画笔
+        this.penColor = '#3498db';
+        this.penWidth = 2;
+        this.turtleSize = 32;
+        this.showGrid = false; // 默认不显示网格
+        this.gridUnit = 100; // 网格单位大小
+        this.turtleVisible = true; // 默认显示乌龟
+        this.animationSpeed = 1.0; // 默认动画速度为1.0倍
+
+        // 图片缓存
+        this.imageCache = new Map();
         this.angle = 90;
         this.drawTurtleIcon();
     }
@@ -875,21 +881,33 @@ class TurtleCanvasManager {
     setColor(color) {
         // 数字到颜色的映射
         const colorMap = {
-            '0': '#FFFFFF',  // 白色
-            '1': '#000000',  // 黑色
-            '2': '#FF0000',  // 红色
-            '3': '#00FF00',  // 绿色
-            '4': '#0000FF',  // 蓝色
-            '5': '#FFFF00',  // 黄色
-            '6': '#FF00FF',  // 紫色
-            '7': '#00FFFF',  // 青色
-            '8': '#FFA500',  // 橙色
-            '9': '#800080'   // 紫罗兰色
+            '0': '#000000',  // 黑色
+            '1': '#FF0000',  // 红色
+            '2': '#00FF00',  // 绿色
+            '3': '#0000FF',  // 蓝色
+            '4': '#FFFF00',  // 黄色
+            '5': '#FF00FF',  // 紫色
+            '6': '#00FFFF',  // 青色
+            '7': '#FFA500',  // 橙色
+            '8': '#800080',  // 紫罗兰色
+            '9': '#FFC0CB', // 粉色
+            '10': '#A52A2A', // 棕色
+            '11': '#808080', // 灰色
+            '12': '#FFD700', // 金色
+            '13': '#C0C0C0', // 银色
+            '14': '#FF6347', // 番茄色
+            '15': '#FFFFFF',  // 白色
+            '16': '#4169E1', // 皇家蓝
+            '17': '#32CD32', // 酸橙绿
+            '18': '#FF69B4', // 热粉红
+            '19': '#8B4513'  // 鞍褐色
         };
 
+
         // 如果是单个数字，使用映射的颜色
-        if (/^[0-9]$/.test(color)) {
+        if (/^(1?[0-9])$/.test(color)) {
             this.penColor = colorMap[color];
+            return;
         }
         // 如果不是以#开头，添加#前缀
         else if (!color.startsWith('#')) {
@@ -902,7 +920,7 @@ class TurtleCanvasManager {
     }
 
 
-    setLineWidth(width) {
+    setSize(width) {
         this.penWidth = width;
     }
 
