@@ -2,6 +2,8 @@
 
 [中文](./README.md) | [English](./readme_en.md)
 
+[在线体验](http://toc.szzy.top "Online playground")
+
 ToC Playground (Turtle on C) 是一个专为C语言教学设计的在线解释器和可视化编程环境。它可以让学生通过类似Python Turtle库的方式学习C语言编程，通过图形化的方式直观地理解编程概念。
 
 ![Rectangle Transformation](./samples/长方形的变化.png)
