@@ -126,4 +126,4 @@ npm run dev
 
 ## 联系方式
 
-如有问题或建议，请联系项目维护者或在GitHub上提交Issue。
+如有问题或建议，请[邮件联系我](mailto:43309251@qq.com)或在GitHub上提交Issue。
